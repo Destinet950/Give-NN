@@ -1,0 +1,276 @@
+/*ѡ��4��ѧ���ɼ�����ϵͳ
+����һ����ѧ���ɼ���Ϣ��������ʵ��ѧ���Լ�ѧ���ɼ���Ϣ����
+ѧ����Ϣ������ѧ�š��༶��������ѧ�����������µȣ�
+ѧ���ɼ�������ѧ�š��γ̳ɼ����������ϣ����ɼ��ܷ֡�ƽ���ɼ��ȡ�
+��������԰���Ŀͳ������ѧ���ɼ������
+��ɹ���ϵͳ��Ŀ�Ļ�������Ҫ�����£�
+1�����룯��Ӽ�¼���ܹ����롢��Ӷ�����¼�������м�¼��������д洢��
+2����ʾ����ѯ��¼�������û�Ҫ��������¼�ؼ�����ʾ����ѯһ��������ؼ�¼��
+3���޸ļ�¼���ܶ�������ڵļ�¼�����޸ģ�������ʾ�޸ĺ�����ݡ�
+4��д���ļ����������ǰ���Ѵ��ڵļ�¼д��Ĵ����ļ��С�    
+ʾ����
+3 5
+1234501 �ƿ�1902 ������ 123 2000.0.0 99 98 97 96 95
+1234502 �ƿ�1903 ���Ӻ� 456 2000.0.1 89 88 87 86 85
+1234503 �ƿ�1904 ����־ 789 2000.0.2 79 78 77 76 75
+1
+2
+1234504 �ƿ�1905 ���  91011 2000.0.3 69 68 67 66 65
+1234505 �ƿ�1906 ����  121314 2000.0.4 59 58 57 56 55
+*/
+#include<iostream>
+#include<stdio.h>
+#include<stdlib.h>
+#include<string>
+using namespace std;
+typedef struct Date//ѧ����������
+{
+	int year;
+	int month;
+	int day;
+}date;
+typedef struct Score//�ɼ�
+{
+	float scorex[50];//���ƿγ̳ɼ�
+	float scorecount;//�ɼ��ܷ�
+	float prescore;//ƽ���ɼ�
+}score;
+typedef struct Student//ѧ����Ϣ
+{
+	int num;//ѧ��
+	string classx;//�༶
+	string name;//����
+	int xueji;//ѧ��
+	date d;//��������
+	score s1;//�ɼ�
+}stu;
+float scorepro[100];
+typedef struct enode//����
+{
+	stu s;
+	enode* next;
+}enode;
+
+enode* create(int n,int m)//�������� ��ʼ��n��ѧ������Ϣ��ÿ��ѧ������m�ųɼ� 
+{
+	enode* head, * p, * q;
+	head = NULL;
+	for (int i = 0;i < n;i++)
+	{
+		p = new enode;
+		p->s.s1.scorecount = 0;
+		p->s.s1.prescore = 0;
+		cin >> p->s.num >> p->s.classx >> p->s.name >> p->s.xueji;
+		cin >> p->s.d.year;
+		cin.get();
+		cin >> p->s.d.month;
+		cin.get();
+		cin >> p->s.d.day;
+		for (int j = 0;j < m;j++)
+		{
+			cin >> p->s.s1.scorex[j];
+			p->s.s1.scorecount += p->s.s1.scorex[j];
+		}
+		p->s.s1.prescore = p->s.s1.scorecount / m;
+		if (!head)
+		{
+			q = head = p;
+			head->next = NULL;
+		}
+		else
+		{
+			q->next = p;
+			q = q->next;
+			q->next = NULL;
+		}
+	}
+	return head;
+}
+
+void insert(enode& head,int m)//���ѧ����Ϣ(m��ѧ��) 
+{
+	enode* p = head.next;
+    enode* q;
+    q = new enode;
+	cin>>q->s.num>>q->s.classx>>q->s.name>>q->s.xueji;
+	cin >> q->s.d.year;
+	cin.get();
+	cin >> q->s.d.month;
+	cin.get();
+	cin >> q->s.d.day;
+	for (int j = 0;j < m;j++)
+	{
+		cin >> q->s.s1.scorex[j];
+		q->s.s1.scorecount += q->s.s1.scorex[j];
+	}
+	q->s.s1.prescore = q->s.s1.scorecount / m;
+	while(p->next)
+	{
+		p = p->next;
+	}
+	p->next = q;
+	q->next = NULL;
+}
+
+void del(enode& head,string nameq)//������ɾ����ѧ�����֣�ɾ��������Ϣ 
+{
+	enode* p = head.next;
+	enode* q = p;
+	enode* g = &head;
+	while(q)
+	{
+		if(q->s.name == nameq)
+		{
+			break;
+		}
+		g = q;
+		q = q->next;
+	}
+	g->next = q->next;
+	delete q; 
+} 
+
+void score_project(enode& head,int m,int n)//����Ŀͳ������ѧ���ɼ����
+{
+	enode* p = head.next;
+    for(int i = 0;i < m;i++)
+	{
+		scorepro[i] = 0;
+	}
+	for(int i = 0;i < m;i++)
+	{
+		while(p)
+	    {
+		    scorepro[i] = p->s.s1.scorex[i] + scorepro[i];
+		    p = p->next;
+	    }
+	    p = head.next;
+	} 
+	for(int i = 0;i < m;i++)
+	{
+		scorepro[i] = scorepro[i]/n;
+	}
+} 
+
+void save(enode& head, char* filePath, char* mode,int m)//��ͼ����Ϣд���ļ�
+{
+	enode* p = head.next;
+	if(p==NULL)
+	{
+		return ;
+	}
+    enode* pMove = p;
+    FILE *fp =fopen(filePath, mode);
+    while(pMove)
+    { 
+        fprintf(fp,"%d %s %s %d %d %d %d",&pMove->s.num,pMove->s.classx.c_str(),pMove->s.name.c_str(),&pMove->s.xueji,&pMove->s.d.year,&pMove->s.d.month,&pMove->s.d.day);
+        for(int i=0;i<m;i++)
+        {
+        	fprintf(fp,"      ");
+			fprintf(fp,"%.1f",pMove->s.s1.scorex[i]);
+		}
+		fprintf(fp,"\n");
+		pMove = pMove->next;
+    }
+    fclose(fp);
+}
+
+int main()
+{
+	enode head, * p;
+	int n, m, x, a, d, u;
+	string nameq; 
+	string namer[20];
+	char c;
+	cout<<"��������Ҫͳ�Ƶ�ѧ�������Ϳ�Ŀ��Ŀ�����磺2 3"<<endl;
+	cin >> n >> m;
+	cout<<"��ֱ�����ѧ����ѧ�š��༶��������ѧ�������������Լ����Ƴɼ���"<<endl; 
+    head.next = create(n,m);
+	while(true)
+	{
+		cout<<"----------------------****----------------------"<<"ѧ����Ϣ����ϵͳ"<<"----------------------****----------------------"<<endl;
+	    cout<<"�����ѧ����Ϣ��������1"<<endl;
+	    cout<<"ɾ��ѧ����Ϣ��������2"<<endl;
+	    cout<<"ͳ�Ƹ���ƽ���ɼ���������3"<<endl;
+	    cout<<"�鿴��ǰȫ��ѧ����Ϣ��������4"<<endl;
+	    cout<<"��ѯָ��ѧ����Ϣ��������5"<<endl;
+	    cout<<"�˳�ϵͳ��������6"<<endl;
+	    cin>>a;
+	    switch(a)
+	    {
+		    case 1 : cout<<"��������Ҫ��ӵ�ѧ������:"<<endl;
+		             cin>>x;
+		             cout<<"��ֱ�����ѧ����ѧ�š��༶��������ѧ�������������Լ����Ƴɼ���"<<endl; 
+	                 for(int i=0;i<x;i++)//����
+	                 {
+		                 insert(head,m);
+	                 }
+	                 break;
+	        case 2 : cout<<"��������Ҫɾ����ѧ������:"<<endl;
+		             cin>>nameq;
+	                 del(head,nameq);//ɾ��
+				     break;
+		    case 3 : score_project(head,m,n);
+		             cout<<"��ѧ��ƽ���ɼ��ֱ���:"<<endl;
+				     for(int i = 0;i < m;i++)//ͳ�Ƹ���ѧ��ƽ���ɼ� 
+	                 {
+		                 cout<<scorepro[i]<<" "<<endl;
+	                 }
+				     break;		 
+		    case 4 : p = head.next;
+	                 while (p)
+	                 {
+		                 cout<<"ѧ��:"<<p->s.num<<" "<<"�༶:"<<p->s.classx<<" "<<"����:"<<p->s.name<<" "<<"ѧ��:"<<p->s.xueji<<" ";
+		                 cout<<"����������:"<<p->s.d.year<<"."<<p->s.d.month<<"."<<p->s.d.day<<" "; 
+		                 cout << "���Ƴɼ�:";
+		                 for (int i = 0;i < m;i++)
+		                 {
+			                 cout << p->s.s1.scorex[i] << " ";
+		                 }
+		                 cout<<endl;
+		                 p = p->next;
+	                 }
+				     break;	
+			case 5 : p = head.next;
+			         cout<<"��������Ҫ��ѯ��ѧ��������༶: (����:���� ����)"<<endl;
+					 for(int i = 0;;i++)
+					 {
+					     cin>>namer[i];
+					     d = i;
+						 c = cin.get();
+						 if(c == '\n')
+						 {
+						 	 break;
+						 }	
+					 }
+					 u = 0;
+					 while((d+1)>0)
+					 {
+					 	 while(p)
+					 	 {
+					 	 	 if(p->s.name == namer[u]||p->s.classx == namer[u])
+					 	     {
+					 	 	     cout<<"ѧ��:"<<p->s.num<<" "<<"�༶:"<<p->s.classx<<" "<<"����:"<<p->s.name<<" "<<"ѧ��:"<<p->s.xueji<<" ";
+		                         cout<<"����������:"<<p->s.d.year<<"."<<p->s.d.month<<"."<<p->s.d.day<<" "; 
+		                         cout << "���Ƴɼ�:";
+		                         for (int i = 0;i < m;i++)
+		                         {
+			                         cout << p->s.s1.scorex[i] << " ";
+		                         }
+		                         cout<<endl;
+						     }
+						     p = p->next;
+						 }
+						 p = head.next;
+						 u++;
+						 d--;
+					 }
+					 break;	     
+			case 6 : 
+			        save(head,"D:\\173401010208.txt","w",m);
+			        goto end;	     
+	    }
+	}
+	end:
+		cout<<"-----****-----";
+}
